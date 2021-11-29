@@ -4,18 +4,21 @@ import subprocess
 from pytube import Playlist, YouTube
 
 def run(pl):
-    # get parent directory; VERY IMPORTANT!!
-    # INCLUDE LAST SLASH AFTER FOLDER NAME
-    # e.g. /home/username/Folder/ or C:\Users\Username\Folder\
-    filepath = input("Please enter the filepath of the directory where this script is located:\n")
+    # Create a folder where all the songs will be put
+    if not(os.path.isdir("./"+pl.title)):
+        os.mkdir(pl.title)
+    # Change working directory to that one
+    os.chdir(pl.title)
+
     # get linked list of links in the playlist
-    links = pl.parse_links()
+    links = pl.video_urls  # Thanks to https://github.com/modkhi/yt-playlist/issues/5
     # download each item in the list
-    for l in links:
+    for i, l in enumerate(links):
+        print("Progress: "+str(i)+" of "+str(len(links))+" ("+str(round(((i/len(links))*100), 2))+"%)")
         # converts the link to a YouTube object
         yt = YouTube(l)
-        # takes first stream; since ffmpeg will convert to mp3 anyway
-        music = yt.streams.first()
+        # takes the best resolution stream to get the best possible audio result
+        music = yt.streams.get_highest_resolution()
         # gets the filename of the first audio stream
         default_filename = music.default_filename
         print("Downloading " + default_filename + "...")
@@ -23,12 +26,15 @@ def run(pl):
         music.download()
         # creates mp3 filename for downloaded file
         new_filename = default_filename[0:-3] + "mp3"
-        print("Converting to mp3....")
-        # converts mp4 audio to mp3 audio
-        subprocess.run(['ffmpeg', '-i', 
-            os.path.join(filepath, default_filename),
-            os.path.join(filepath, new_filename)
-        ])
+        
+        # converts mp4 video to mp3 audio
+        cmd = "ffmpeg -i \""+default_filename+"\" \""+new_filename+"\""
+        
+        subprocess.run(cmd, capture_output=True, text=True, input="y")
+        
+        # Deleting the mp4 video file used to generate mp3
+        os.remove(default_filename)
+
     
     print("Download finished.")
 
