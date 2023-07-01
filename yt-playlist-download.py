@@ -5,6 +5,7 @@ from pytube import Playlist, YouTube
 
 def run(pl):
     # Create a folder where all the songs will be put
+    print(pl.title)
     if not(os.path.isdir("./"+pl.title)):
         os.mkdir(pl.title)
     # Change working directory to that one
@@ -16,7 +17,7 @@ def run(pl):
     for i, l in enumerate(links):
         print("Progress: "+str(i)+" of "+str(len(links))+" ("+str(round(((i/len(links))*100), 2))+"%)")
         # converts the link to a YouTube object
-        yt = YouTube(l)
+        yt = YouTube(l, use_oauth=True, allow_oauth_cache=True) 
         # takes the best resolution stream to get the best possible audio result
         music = yt.streams.get_highest_resolution()
         # gets the filename of the first audio stream
