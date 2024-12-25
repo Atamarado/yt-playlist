@@ -1,7 +1,11 @@
 import os
 import subprocess
 
-from pytube import Playlist, YouTube
+from pytubefix import Playlist, YouTube
+
+def clean_video_name(video_name):
+    video_name = video_name.replace('"', '').replace('|', '')
+    return video_name
 
 def run(pl):
     # Create a folder where all the songs will be put
@@ -21,10 +25,10 @@ def run(pl):
         # takes the best resolution stream to get the best possible audio result
         music = yt.streams.get_highest_resolution()
         # gets the filename of the first audio stream
-        default_filename = music.default_filename
+        default_filename = clean_video_name(music.default_filename)
         print("Downloading " + default_filename + "...")
         # downloads first audio stream
-        music.download()
+        music.download(filename=default_filename)
         # creates mp3 filename for downloaded file
         new_filename = default_filename[0:-3] + "mp3"
         
