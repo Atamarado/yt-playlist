@@ -4,7 +4,7 @@ import subprocess
 from pytubefix import Playlist, YouTube
 
 def clean_video_name(video_name):
-    video_name = video_name.replace('"', '').replace('|', '')
+    video_name = video_name.replace('"', '').replace('|', '').replace('?', '').replace('/', '')
     return video_name
 
 def run(pl):
