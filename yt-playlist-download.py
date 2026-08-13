@@ -21,7 +21,7 @@ def run(pl):
     for i, l in enumerate(links):
         print("Progress: "+str(i)+" of "+str(len(links))+" ("+str(round(((i/len(links))*100), 2))+"%)")
         # converts the link to a YouTube object
-        yt = YouTube(l)
+        yt = YouTube(l, 'WEB_MUSIC')
         # takes the best resolution stream to get the best possible audio result
         music = yt.streams.get_highest_resolution()
         # gets the filename of the first audio stream
